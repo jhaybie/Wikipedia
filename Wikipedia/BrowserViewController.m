@@ -9,8 +9,11 @@
 #import "BrowserViewController.h"
 
 @interface BrowserViewController ()
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *viewFullWikiButton;
+- (IBAction)onViewFullWikiButtonPress:(id)sender;
 
 @end
+
 
 
 @implementation BrowserViewController
@@ -22,8 +25,17 @@
     [super viewDidLoad];
     self.navigationController.title = passedTitle;
     [webViewOutlet loadHTMLString:passedSnippet baseURL:nil];
-    
 }
 
 
+- (IBAction)onViewFullWikiButtonPress:(id)sender
+{
+    NSString *address = @"http://en.wikipedia.org/wiki/";
+    address = [address stringByAppendingString:passedTitle];
+    address = [address stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    NSURL *url = [NSURL URLWithString:address];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [webViewOutlet loadRequest:request];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+}
 @end

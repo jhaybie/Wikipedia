@@ -8,6 +8,7 @@
 
 #import "RootViewController.h"
 
+
 @interface RootViewController ()
 {
     __weak IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -17,8 +18,44 @@
 }
 @end
 
+
 @implementation RootViewController
 @synthesize searchResultTableView, searchTextField;
+
+
+
+#pragma mark UITableViewDelegate
+
+-(UITableViewCell *)tableView:(UITableView *)tableView2 cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView2 dequeueReusableCellWithIdentifier:@"cellIdentifier"];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", searchResultDictionary.allKeys[indexPath.row]];
+    return cell;
+}
+
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [searchResultDictionary count];
+}
+
+
+#pragma mark UIStoryBoardSegueDelegate
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(UITableViewCell*)sender
+{
+    NSIndexPath *indexPath = [self.searchResultTableView indexPathForCell:sender];
+    
+    BrowserViewController *bvc = segue.destinationViewController;
+    
+    NSString *tempKey = [NSString stringWithFormat:@"%@", searchResultDictionary.allKeys[indexPath.row]];
+    NSString *tempSnippet = [NSString stringWithFormat:@"%@", [searchResultDictionary objectForKey:tempKey]];
+    
+    bvc.passedTitle = [NSString stringWithFormat:@"%@", tempKey];
+    bvc.passedSnippet = [NSString stringWithFormat:@"%@", tempSnippet];
+}
+
+
 
 
 - (void)checkTextField:(NSTimer *)timer
@@ -31,6 +68,7 @@
     else
         [searchButton setEnabled:YES];
 }
+
 
 - (void) performSearch
 {
@@ -80,6 +118,12 @@
 }
 
 
+- (IBAction)pressedSearchButton:(id)sender
+{
+    [self.view endEditing:YES];
+    [self performSearch];
+}
+
 
 - (void)viewDidLoad
 {
@@ -95,37 +139,4 @@
 }
 
 
--(UITableViewCell *)tableView:(UITableView *)tableView2 cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView2 dequeueReusableCellWithIdentifier:@"cellIdentifier"];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", searchResultDictionary.allKeys[indexPath.row]];
-    return cell;
-}
-
-
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(UITableViewCell*)sender
-{
-    NSIndexPath *indexPath = [self.searchResultTableView indexPathForCell:sender];
-    
-    BrowserViewController *bvc = segue.destinationViewController;
-    
-    NSString *tempKey = [NSString stringWithFormat:@"%@", searchResultDictionary.allKeys[indexPath.row]];
-    NSString *tempSnippet = [NSString stringWithFormat:@"%@", [searchResultDictionary objectForKey:tempKey]];
-    
-    bvc.passedTitle = [NSString stringWithFormat:@"%@", tempKey];
-    bvc.passedSnippet = [NSString stringWithFormat:@"%@", tempSnippet];
-}
-
-
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [searchResultDictionary count];
-}
-
-
-- (IBAction)pressedSearchButton:(id)sender
-{
-    [self.view endEditing:YES];
-    [self performSearch];
-}
 @end
