@@ -38,12 +38,22 @@
     address = [address stringByAppendingString:searchTextField.text];
     address = [address stringByAppendingString:@"&srprop=snippet&format=json"];
     address = [address stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    [searchTextField setHidden:YES];
+    [searchButton setHidden:YES];
+    [loadingLabel setHidden:NO];
+    [activityIndicator setHidden:NO];
+    [activityIndicator startAnimating];
     NSURL *url = [NSURL URLWithString:address];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError)
      {
+         [searchTextField setHidden:NO];
+         [searchButton setHidden:NO];
+         [loadingLabel setHidden:YES];
+         [activityIndicator setHidden:YES];
+         [activityIndicator stopAnimating];
          searchResultDictionary = [[NSMutableDictionary alloc] init];
          [searchResultTableView setHidden: NO];
          if (!connectionError)
